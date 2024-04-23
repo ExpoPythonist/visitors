@@ -1,0 +1,116 @@
+{% load qr_code %}{% load static %}
+<div class="container-fluid">
+    <form action="" id="visitor-form">
+        <input type="hidden" name="id" value="{{visitor.id}}">
+        <div class="mb-3">
+            <label for="department" class="control-label">Visiting Department</label>
+            <select type="text" id="department" name="department" class="form-select form-select-sm rounded-0 select2" required>
+                {% if not visitor.department %}
+                <option value=""  disabled selected></option>
+                {% else %}
+                <option value="" disabled ></option>
+                {% endif %}
+                {% for department in departments %}
+                    {% if department.id == visitor.department.id %}
+                    <option value="{{department.id}}" selected>{{department.name}}</option>
+                    {% else %}
+                    <option value="{{department.id}}">{{department.name}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="name" class="control-label">Visitor Name</label>
+            <input type="text" id="name" name="name" class="form-control form-control-sm rounded-0" value="{{visitor.name}}" required>
+        </div>
+        <div class="mb-3">
+            <label for="gender" class="control-label">Gender</label>
+            <select type="text" id="gender" name="gender" class="form-select form-select-sm rounded-0" required>
+                {% if visitor.gender == 'Male' %}
+                <option value="Male"  selected>Male</option>
+                {% else %}
+                <option value="Male" >Male</option>
+                {% endif %}
+                {% if visitor.gender == 'Female' %}
+                <option value="Female"  selected>Female</option>
+                {% else %}
+                <option value="Female" >Female</option>
+                {% endif %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="contact" class="control-label">Contact #</label>
+            <input type="text" id="contact" name="contact" class="form-control form-control-sm rounded-0" value="{{visitor.contact}}">
+        </div>
+        <div class="mb-3">
+            <label for="email" class="control-label">Email</label>
+            <input type="email" id="email" name="email" class="form-control form-control-sm rounded-0" value="{{visitor.email}}">
+        </div>
+        <div class="mb-3">
+            <label for="address" class="control-label">Address</label>
+            <textarea rows="3" id="address" name="address" class="form-control form-control-sm rounded-0" required>{{visitor.address}}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="reason" class="control-label">Reason for Visiting</label>
+            <textarea rows="3" id="reason" name="reason" class="form-control form-control-sm rounded-0" required>{{visitor.reason}}</textarea>
+        </div>
+    </form>
+</div>
+<script>
+    $(function() {
+        $('#uni_modal').on('shown.bs.modal', function() {
+            $('.select2').select2({
+                placeholder: "Please Select Here",
+                width: "100%",
+                dropdownParent: $('#uni_modal'),
+                containerCssClass: 'form-control form-control-sm rounded-0'
+            })
+        })
+        $('#visitor-form').submit(function(e) {
+            e.preventDefault();
+            var _this = $(this)
+            $('.err-msg').remove();
+            var el = $('<div>')
+            el.addClass("alert alert-danger err-msg")
+            el.hide()
+            if (_this[0].checkValidity() == false) {
+                _this[0].reportValidity();
+                return false;
+            }
+            start_loader();
+            $.ajax({
+                headers: {
+                    "X-CSRFToken": '{{csrf_token}}'
+                },
+                url: "{% url 'save-visitor' %}",
+                data: new FormData($(this)[0]),
+                cache: false,
+                contentType: false,
+                processData: false,
+                method: 'POST',
+                type: 'POST',
+                dataType: 'json',
+                error: err => {
+                    console.log(err)
+                    alert("An error occured", 'error');
+                    end_loader();
+                },
+                success: function(resp) {
+                    if (typeof resp == 'object' && resp.status == 'success') {
+                        location.reload()
+                    } else if (resp.status == 'failed' && !!resp.msg) {
+                        el.html(resp.msg)
+                    } else {
+                        el.text("An error occured", 'error');
+                        end_loader();
+                        console.err(resp)
+                    }
+                    _this.prepend(el)
+                    el.show('slow')
+                    $("html, body, .modal").scrollTop(0);
+                    end_loader()
+                }
+            })
+        })
+    })
+</script>

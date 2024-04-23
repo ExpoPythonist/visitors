@@ -1,0 +1,58 @@
+{% extends "base.html" %} {% load humanize %} {% load customfilter %} {% block pageContent %}
+
+<!--Section: Content-->
+<section class="">
+    <h2 class="fw-bolder">Welcome, {{request.user.first_name}}{{request.user.last_name}}!</h2>
+    <hr>
+    <div class="row justify-content-center">
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 card card-default rounded-0 shadow border border-gray">
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="d-flex w-100 align-items-center">
+                        <div class="col-3">
+                            <i class="fs-1 text-primary fa fa-building"></i>
+                        </div>
+                        <div class="col-9">
+                            <h1 class="text-center">{{dapartments|intcomma}}</h2>
+                                <h5 class="text-center"><b>Active Departments</b></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 card card-default rounded-0 shadow border border-gray">
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="d-flex w-100 align-items-center">
+                        <div class="col-3">
+                            <i class="fs-1 text-dark fa fa-users-cog"></i>
+                        </div>
+                        <div class="col-9">
+                            <h1 class="text-center">{{users|intcomma}}</h2>
+                                <h5 class="text-center"><b>Users</b></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 card card-default rounded-0 shadow border border-gray">
+            <div class="card-body">
+                <div class="container-fluid">
+                    <div class="d-flex w-100 align-items-center">
+                        <div class="col-3">
+                            <i class="fs-1 text-success fa fa-calendar-day"></i>
+                        </div>
+                        <div class="col-9">
+                            <h1 class="text-center">{{visitors|intcomma}}</h2>
+                                <h5 class="text-center"><b>Today's Total Visitors</b></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div> {% endblock pageContent %} {% block ScriptBlock %}
+<script>
+</script>
+{% endblock ScriptBlock %}

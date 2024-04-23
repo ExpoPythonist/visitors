@@ -1,0 +1,6 @@
+Django==4.0.3
+Pillow
+django-qr-code
+numpy
+cryptography
+

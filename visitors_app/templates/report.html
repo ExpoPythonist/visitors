@@ -1,0 +1,126 @@
+{% extends 'base.html' %} {% load static %} {% block pageContent %}
+<section class="py-4">
+    <div class="container">
+        <h3 class="fw-bolder text-center">Daily Vistor Logs Report</h3>
+        <center>
+            <hr class="bg-primary opacity-100" style="height:3px" width="5%">
+        </center>
+        <div class="card rounded-0 shadow">
+            <div class="card-body">
+                <div class="container-fluid">
+                    <fieldset class="p-2 border mb-4">
+                        <legend class="w-auto px-3">Filter</legend>
+                        <form action="{% url 'report-page' %}" method="GET">
+                            <div class="container-fluid">
+                                <div class="row align-items-end">
+                                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                        <label class="control-label" for="filter_date">Choose Date</label>
+                                        <input type="date" id="filter_date" class="form-control form-control-sm rounded-0" name="filter_date" value="{{filter_date|date:'Y-m-d'}}" required="required">
+                                    </div>
+                                    <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                        <button class="btn btn-sm btn-primary rounded-0 bg-gradient-primary"><i class="fa fa-filter"></i> Filter</button>
+                                        <button class="btn btn-sm btn-light rounded-0 bg-gradient-light border" type="button" id="print"><i class="fa fa-print"></i> Print</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </fieldset>
+                    <div id="printout">
+                        <table class="table table-bordered table-striped" id="visitor-tbl">
+                            <colgroup>
+                                <col width="5%">
+                                <col width="13.75%">
+                                <col width="13.75%">
+                                <col width="13.75%">
+                                <col width="13.75%">
+                                <col width="20%">
+                                <col width="20%">
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">Visiting Department</th>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-center">Contact</th>
+                                    <th class="text-center">Email</th>
+                                    <th class="text-center">Address</th>
+                                    <th class="text-center">Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for visitor in visitors %}
+                                <tr>
+                                    <td class="text-center">{{ forloop.counter }}</td>
+                                    <td>{{ visitor.department}}</td>
+                                    <td>{{ visitor.name}}</td>
+                                    <td>{{ visitor.contact}}</td>
+                                    <td>{{ visitor.email}}</td>
+                                    <td>{{ visitor.address }}</td>
+                                    <td>{{ visitor.reason }}</td>
+                                </tr>
+                                {% endfor %} {% if not visitors %}
+                                <tr>
+                                    <th class="text-center" colspan="7">No Data</th>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<noscript id="print-header">
+<div>
+    <div class="d-flex align-items-center">
+        <div class="col-2 text-center">
+            <img src="{% static 'assets/default/img/logo.jpg' %}" alt="System Logo" style="height:4em;width:4em;object-fit:cover;object-position:center center" class="img-thumbnail rounded-circle">
+        </div>
+        <div class="col-8 text-center">
+            <h4 class="fw-bold text-center mb-0">{{ system_name }}</h4>
+            <h3 class="fw-bold text-center mb-0">Daily Vistor Logs Report</h3>
+            <div class="text-center">As of</div>
+            <h5 class="text-center mb-0">{{filter_date|date:" F d, Y"}}</h5>
+        </div>
+    </div>
+    <hr>
+</div>
+</noscript> {% endblock pageContent %} {% block ScriptBlock %}
+<script>
+    $(function() {
+        $('#printout table').find('td, th').addClass("align-middle px-1 py-1")
+        $('#print').click(function() {
+            var h = $('head').clone()
+            var ph = $($('noscript#print-header').html()).clone()
+            var p = $('#printout').clone()
+            start_loader()
+            h.find('link').each(function() {
+                var href = $(this).attr('href')
+                $(this).attr("href", "{{ system_host }}" + href)
+            })
+
+            h.find('script').each(function() {
+                var src = $(this).attr('src')
+                $(this).attr("src", "{{ system_host }}" + src)
+            })
+            ph.find('img').each(function() {
+                var src = $(this).attr('src')
+                $(this).attr("src", "{{ system_host }}" + src)
+            })
+            var nw = window.open("", "_blank", "height=" + ($(window).height() * .8) + ",width=" + ($(window).width() * .8) + ",top=" + ($(window).height() * .1) + ",left=" + ($(window).width() * .1) + "")
+            nw.document.querySelector('head').innerHTML = h[0].outerHTML
+            nw.document.querySelector('body').innerHTML = ph[0].outerHTML
+            nw.document.querySelector('body').innerHTML += p[0].outerHTML
+            nw.document.close()
+            setTimeout(() => {
+                nw.print()
+                setTimeout(() => {
+                    nw.close()
+                    end_loader()
+                }, 300)
+            }, 500)
+        })
+    })
+</script>
+{% endblock ScriptBlock %}

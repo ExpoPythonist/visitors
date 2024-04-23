@@ -1,0 +1,32 @@
+{% load qr_code %} {% load static %} {% load humanize %}
+<style>
+    #uni_modal .modal-footer {
+        display: none
+    }
+    
+    #uni_modal .modal-sub-footer {
+        display: flex
+    }
+</style>
+<div class="container-fluid" id="e-details">
+    <div class="lh-1">
+        <dl>
+            <dt>Visiting Department</dt>
+            <dd class="ps-4">{{visitor.department}}</dd>
+            <dt>Visitor Name</dt>
+            <dd class="ps-4">{{visitor.name}}</dd>
+            <dt>Gender</dt>
+            <dd class="ps-4">{{visitor.gender}}</dd>
+            <dt>Contact #</dt>
+            <dd class="ps-4">{{visitor.contact}}</dd>
+            <dt>Email</dt>
+            <dd class="ps-4">{{visitor.email}}</dd>
+            <dt>Address</dt>
+            <dd class="ps-4">{{visitor.address}}</dd>
+            <dt>Reason for Visiting</dt>
+            <dd class="ps-4">{{visitor.reason}}</dd>
+            <dt>Date and Time Logged</dt>
+            <dd class="ps-4">{{visitor.date_added|date:"F d, Y h:i A"}}</dd>
+        </dl>
+    </div>
+</div>
